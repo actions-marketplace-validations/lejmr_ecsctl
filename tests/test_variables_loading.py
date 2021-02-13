@@ -18,6 +18,12 @@ def test_read_nonyaml_flat_file():
     with pytest.raises(Exception, match=r"^Not a loadable yaml format.*"):
         load_path('tests/variables/env1.noyml')
 
+def test_read_json_file():
+    v = load_path('tests/variables/test.json')
+    assert v.__class__.__name__ == 'list'
+    assert len(v) == 1
+    assert v == [{"test": "value", "test1": "value2"}]
+    
 # Test on multiple files in 
 def test_load_simple_dir():
     v = load_path('tests/variables/env2')
