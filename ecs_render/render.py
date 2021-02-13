@@ -50,6 +50,13 @@ def merge_dicts(list_of_dicts):
 # variables
 def render(task_definition, values):
     td = yaml.dump(task_definition, Dumper=yaml.Dumper)
-    template = Template(td)
-    r = template.render(**values)
-    return yaml.load(r, Loader=yaml.FullLoader)
+    i=0 
+    while i<5:    
+        template = Template(td)
+        td = template.render(**values)
+        print(td)
+        if not "{{" in td:
+            return yaml.load(td, Loader=yaml.FullLoader)
+    
+    # In case the repeated execution reached the max deepness
+    raise Exception("Too many recusions")
