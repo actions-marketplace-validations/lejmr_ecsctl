@@ -3,7 +3,7 @@ import errno
 import magic
 import yaml
 
-
+# support function allowing to read content of a file or directory specified by path variable
 def load_path(path):
 
     # test if file even exists
