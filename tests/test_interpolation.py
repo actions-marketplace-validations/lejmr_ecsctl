@@ -8,6 +8,7 @@ def test_no_interpolation():
     v = interpolate_values(inp)
     assert v == {"b": "c"}
 
+
 def test_simple_interpolation():
     inp = {
         "a": "{{ b }}",
@@ -15,6 +16,7 @@ def test_simple_interpolation():
     }
     v = interpolate_values(inp)
     assert v == {"a": "c", "b": "c"}
+
 
 def test_nested_interpolation():
     inp = {

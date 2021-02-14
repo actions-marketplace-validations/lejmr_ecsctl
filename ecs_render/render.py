@@ -12,15 +12,15 @@ def load_path(path, ivalues=None):
     # test if file even exists
     if not os.path.exists(path):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
-    
+
     # Load as a directory
     if os.path.isdir(path):
         vars = []
         for f in os.listdir(path):
             try:
-                vars += load_path(os.path.join(path,f), ivalues)
+                vars += load_path(os.path.join(path, f), ivalues)
             except Exception as e:
-                # I particularly dont like this way, but it works.. 
+                # I particularly dont like this way, but it works..
                 # TODO: should be modified, so an dedicated exception is raised
                 if "Not a loadable yaml format" in str(e):
                     continue
@@ -32,7 +32,7 @@ def load_path(path, ivalues=None):
         mime = magic.from_file(path, mime=True)
         if mime != "text/plain":
             raise Exception("Not a text/plain format")
-        
+
         # Try to read yaml file
         with open(path, "r") as f:
             if not ivalues is None:
@@ -50,21 +50,22 @@ def load_path(path, ivalues=None):
 
 
 # This function will need to merge all loaded dicts
-# At the moment, I will implemented very simple merge without deep nesting 
-# merging support. 
+# At the moment, I will implemented very simple merge without deep nesting
+# merging support.
 def merge_dicts(list_of_dicts):
     _tmp = {}
     for d in list_of_dicts:
-        print( _tmp, d)
+        print(_tmp, d)
         _tmp = {**_tmp, **d}
     return _tmp
+
 
 # This is just a helping function mimicing Ansible's interpolation within variables
 # I do not exepct anybody will ever need more than 5 consecutive interpolations
 # if so it means there is a very bad pattern how deployment is configured
 def interpolate_values(values):
     td = yaml.dump(values, Dumper=yaml.Dumper)
-    for i in range(0,5):
+    for i in range(0, 5):
         template = Template(td)
         td = template.render(**values)
         if not "{{" in td:
@@ -73,7 +74,7 @@ def interpolate_values(values):
 
 
 # This function takes task_definition in the form of a dict and uses jinja2 for
-# variable interplation using values which is another dict composed of all provided 
+# variable interplation using values which is another dict composed of all provided
 # variables
 def render(task_definition, values):
     td = yaml.dump(task_definition, Dumper=yaml.Dumper)

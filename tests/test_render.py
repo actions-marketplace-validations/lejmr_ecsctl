@@ -13,10 +13,11 @@ def test_simple_render():
     }
 
     # The render
-    r = render(td,vars)
+    r = render(td, vars)
 
     # Asserts
     assert r == {"version": "latest", "task_name": "name_value1"}
+
 
 def test_nested_case1():
     # task definition
@@ -31,7 +32,7 @@ def test_nested_case1():
     }
 
     # The render
-    r = render(td,vars)
+    r = render(td, vars)
 
     # Asserts
     assert r == {"version": "latest", "task_name": "name_value1"}
