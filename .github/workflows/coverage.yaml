@@ -1,4 +1,4 @@
-name: pytest-coverage-commentator
+name: Code coverage test
 on:
   pull_request:
     branches: 
