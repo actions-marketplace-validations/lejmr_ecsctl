@@ -7,7 +7,7 @@ from jinja2 import Template
 
 
 # support function allowing to read content of a file or directory specified by path variable
-def load_path(path):
+def load_path(path, ivalues=None):
 
     # test if file even exists
     if not os.path.exists(path):
@@ -17,7 +17,14 @@ def load_path(path):
     if os.path.isdir(path):
         vars = []
         for f in os.listdir(path):
-            vars += load_path(os.path.join(path,f))
+            try:
+                vars += load_path(os.path.join(path,f), ivalues)
+            except Exception as e:
+                # I particularly dont like this way, but it works.. 
+                # TODO: should be modified, so an dedicated exception is raised
+                if "Not a loadable yaml format" in str(e):
+                    continue
+                raise e
         return vars
 
     else:
@@ -28,7 +35,15 @@ def load_path(path):
         
         # Try to read yaml file
         with open(path, "r") as f:
-            data = yaml.load(f, Loader=yaml.FullLoader)
+            if not ivalues is None:
+                # Interpolate the loaded file - this is most likely task_definition
+                # That should be in Jinja2 format
+                t = Template(f.read())
+                r = t.render(**ivalues)
+                data = yaml.load(r, Loader=yaml.FullLoader)
+            else:
+                # Simply load the yaml/json - this should be file with values
+                data = yaml.load(f, Loader=yaml.FullLoader)
             if data.__class__.__name__ != 'dict':
                 raise Exception("Not a loadable yaml format - {}".format(path))
             return [data]

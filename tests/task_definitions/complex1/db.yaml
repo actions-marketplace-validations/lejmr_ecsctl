@@ -1,0 +1,6 @@
+---
+  {% if env|default("DEV") == "DEV" %}
+container_definition:
+  - name: db
+    image: postgres:latest
+{% endif %}

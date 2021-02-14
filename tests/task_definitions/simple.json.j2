@@ -1,0 +1,7 @@
+{
+    "family": "test"
+    {% if var|default("DEV") == "PROD" -%}
+    ,
+    "other": "{{ var2 }}"
+    {% endif %}
+}
