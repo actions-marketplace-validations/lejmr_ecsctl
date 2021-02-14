@@ -44,19 +44,24 @@ def merge_dicts(list_of_dicts):
         _tmp = {**_tmp, **d}
     return _tmp
 
+# This is just a helping function mimicing Ansible's interpolation within variables
+# I do not exepct anybody will ever need more than 5 consecutive interpolations
+# if so it means there is a very bad pattern how deployment is configured
+def interpolate_values(values):
+    td = yaml.dump(values, Dumper=yaml.Dumper)
+    for i in range(0,5):
+        template = Template(td)
+        td = template.render(**values)
+        if not "{{" in td:
+            return yaml.load(td, Loader=yaml.FullLoader)
+    raise Exception("Too many recusions")
+
 
 # This function takes task_definition in the form of a dict and uses jinja2 for
 # variable interplation using values which is another dict composed of all provided 
 # variables
 def render(task_definition, values):
     td = yaml.dump(task_definition, Dumper=yaml.Dumper)
-    i=0 
-    while i<5:    
-        template = Template(td)
-        td = template.render(**values)
-        print(td)
-        if not "{{" in td:
-            return yaml.load(td, Loader=yaml.FullLoader)
-    
-    # In case the repeated execution reached the max deepness
-    raise Exception("Too many recusions")
+    template = Template(td)
+    td = template.render(interpolate_values(values))
+    return yaml.load(td, Loader=yaml.FullLoader)
