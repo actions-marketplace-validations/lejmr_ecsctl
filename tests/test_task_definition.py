@@ -25,8 +25,8 @@ def test_simple3_td():
 
 
 def test_complex_deployment1():
-    o = load_path('tests/task_definitions/complex1', {})
-    assert o == [
+    o = load_path('tests/task_definitions/complex1', {})    
+    expected = [
         {'container_definition': [{'name': 'db', 'image': 'postgres:latest'}]},
         {'container_definition': [
             {'name': 'app', 'image': 'lejmr/image:latest', 'container_ports': ['4500:4500'], 'links': ['db']}]},
@@ -34,15 +34,21 @@ def test_complex_deployment1():
             {'name': 'test1'}, {'name': 'test2'}]}
     ]
 
+    assert len(o) == len(expected)
+    assert all([x in expected for x in o])
+
 
 def test_complex_deployment2():
     ivars = {
         "env": "PROD"
     }
     o = load_path('tests/task_definitions/complex1', ivars)
-    assert o == [
+    expected = [
         {'container_definition': [
             {'name': 'app', 'image': 'lejmr/image:latest', 'container_ports': ['4500:4500']}]},
         {'task_role': 'arn:gfgf:gfdg:gg', 'volumes': [
             {'name': 'test1'}, {'name': 'test2'}]}
     ]
+
+    assert len(o) == len(expected)
+    assert all([x in expected for x in o])
