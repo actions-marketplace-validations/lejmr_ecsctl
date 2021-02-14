@@ -35,7 +35,7 @@ def test_complex_deployment1():
     ]
 
     assert len(o) == len(expected)
-    assert all([a == b for a, b in zip(o, expected)])
+    assert all([x in expected for x in o])
 
 
 def test_complex_deployment2():
@@ -51,4 +51,4 @@ def test_complex_deployment2():
     ]
 
     assert len(o) == len(expected)
-    assert all([a == b for a, b in zip(o, expected)])
+    assert all([x in expected for x in o])
