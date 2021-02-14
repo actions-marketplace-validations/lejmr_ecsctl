@@ -1,12 +1,12 @@
 import argparse
-from ecs_render import render
+from ecs_render import render, helper
 import json
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Render ECS Task definition from template and input variables')
     parser.add_argument('--td', help="Path to task definition (json, yaml, or even a directory)", default="task-definition.json")
     parser.add_argument('--val', nargs="*", help="Path values used for interpolation of task definition (json, yaml, or even a directory)")
-
+    parser.add_argument('--set', nargs="*", help="Values overrides, e.g., name=NAME,value=VALUE")
     args = parser.parse_args()
 
     # Load variables from given files
@@ -17,6 +17,11 @@ if __name__ == "__main__":
         mvalues = render.merge_dicts(values)
     
     # Override by variables loaded from argparse (TODO find a proper format)
+    if not args.set is None:
+        overrides = {}
+        for s in args.set:
+            overrides = render.merge_dicts([overrides, helper.parse_value_override(s)])
+        mvalues = render.merge_dicts([mvalues, overrides])
 
     # Interpolate variables
     if len(mvalues):

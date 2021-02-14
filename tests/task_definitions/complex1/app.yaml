@@ -2,7 +2,7 @@ container_definition:
   - name: app
     image: lejmr/image:{{ version|default("latest") }}
     container_ports:
-      - '4500:4500'
+      - '{{ host_port|default(4500) }}:4500'
     {% if env|default("DEV") != "PROD" %}
     links:
       - db
