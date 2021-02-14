@@ -1,6 +1,8 @@
 import argparse
 from ecs_render import render, helper
 import json
+import logging
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Render ECS Task definition from template and input variables')
@@ -20,7 +22,12 @@ if __name__ == "__main__":
     if not args.set is None:
         overrides = {}
         for s in args.set:
-            overrides = render.merge_dicts([overrides, helper.parse_value_override(s)])
+            try:
+                a = helper.parse_value_override(s)
+            except ValueError:
+                logging.warning("Skiping argument {}".format(s))
+                continue
+            overrides = render.merge_dicts([overrides, a])
         mvalues = render.merge_dicts([mvalues, overrides])
 
     # Interpolate variables
