@@ -1,4 +1,4 @@
-name: Python validation
+name: Unit tests
 
 on: [push]
 
