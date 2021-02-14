@@ -2,7 +2,6 @@ import os
 import errno
 import magic
 import yaml
-import jinja2
 from jinja2 import Template
 
 
@@ -26,7 +25,6 @@ def load_path(path, ivalues=None):
                     continue
                 raise e
         return vars
-
     else:
         # print ("reading file")
         mime = magic.from_file(path, mime=True)
@@ -55,9 +53,29 @@ def load_path(path, ivalues=None):
 def merge_dicts(list_of_dicts):
     _tmp = {}
     for d in list_of_dicts:
-        print(_tmp, d)
-        _tmp = {**_tmp, **d}
+        _tmp = merge(_tmp, d)
     return _tmp
+
+
+def merge(a, b, path=None):
+    "merges b into a"
+    if path is None:
+        path = []
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                merge(a[key], b[key], path + [str(key)])
+            elif isinstance(a[key], list) and isinstance(b[key], list):
+                a[key] += b[key]
+            elif isinstance(a[key], str) and isinstance(b[key], str):
+                a[key] = b[key]
+            elif a[key] == b[key]:
+                pass  # same leaf value
+            else:
+                raise Exception('Conflict at %s' % '.'.join(path + [str(key)]))
+        else:
+            a[key] = b[key]
+    return a
 
 
 # This is just a helping function mimicing Ansible's interpolation within variables

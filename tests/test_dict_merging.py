@@ -11,6 +11,7 @@ def test_simple_merge():
 
     # just the merge
     m = merge_dicts(inp)
+    print(m)
     assert m == {"a": "b", "b": "c", "c": "override"}
 
 
@@ -30,3 +31,26 @@ def test_one_dict():
     # just the merge
     m = merge_dicts(inp)
     assert m == {"a": "b"}
+
+def test_nested1():
+    # Input list of dicts - happy path
+    inp = [
+        {
+            "a": "b",
+            "b": [{"name": "test1", "family": "family1"}]
+        },
+        {
+            "b": [{"name": "test2", "family": "family2"}]
+        }
+    ]
+
+    # just the merge
+    m = merge_dicts(inp)
+    assert m == {
+        "a": "b",
+        "b": [
+            {"name": "test1", "family": "family1"},
+            {"name": "test2", "family": "family2"}
+        ]
+    }
+

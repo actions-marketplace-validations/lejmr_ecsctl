@@ -1,6 +1,6 @@
 container_definition:
   - name: app
-    image: lejmr/image:latest
+    image: lejmr/image:{{ version|default("latest") }}
     container_ports:
       - '4500:4500'
     {% if env|default("DEV") != "PROD" %}
