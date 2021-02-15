@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Defines output 
-OUTPUT_TASK_DEFINITION_PATH="task-definition-rendered.json"
+export OUTPUT_TASK_DEFINITION_PATH="task-definition-rendered.json"
+env
 
 # Set to fail asap
 set -e pipetail
@@ -15,6 +16,7 @@ if [ -n "$INPUT_IMAGE" ]; then
 fi
 
 # Execute the command
+echo $CMD
 sh -c "$CMD" > $OUTPUT_TASK_DEFINITION_PATH
 
 # Final return of path to the file
