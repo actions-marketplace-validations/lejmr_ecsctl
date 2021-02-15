@@ -29,7 +29,7 @@ def load_path(path, ivalues=None):
         # print ("reading file")
         mime = magic.from_file(path, mime=True)
         if mime != "text/plain":
-            raise Exception("Not a text/plain format")
+            raise Exception("File {} is not in the text/plain format, but {}".format(path, mime))
 
         # Try to read yaml file
         with open(path, "r") as f:
