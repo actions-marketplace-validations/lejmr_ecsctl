@@ -28,7 +28,7 @@ def load_path(path, ivalues=None):
     else:
         # print ("reading file")
         mime = magic.from_file(path, mime=True)
-        if mime != "text/plain":
+        if not mime in ["text/plain", "application/json", "application/yaml"]:
             raise Exception("File {} is not in the text/plain format, but {}".format(path, mime))
 
         # Try to read yaml file
