@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 from ecs_render import render, helper
 import json
