@@ -1,7 +1,7 @@
 # Amazon AWS - ECS Task renderer using Jinja2
 
 [![Known Vulnerabilities](https://snyk.io/test/github/lejmr/amazon-ecs-render-task-definition/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/lejmr/amazon-ecs-render-task-definition?targetFile=requirements.txt)
-![Code coverage](https://github.com/lejmr/amazon-ecs-render-task-definition/workflows/Code%20coverage/badge.svg)
+[![codecov](https://codecov.io/gh/lejmr/amazon-ecs-render-task-definition/branch/main/graph/badge.svg?token=OQ8J2Z71MM)](https://codecov.io/gh/lejmr/amazon-ecs-render-task-definition)
 ![Unit tests](https://github.com/lejmr/amazon-ecs-render-task-definition/workflows/Unit%20tests/badge.svg)
 
 The goal of this project is to deliver a very simple templating library that can generate Amazon ECS - Task definition which can be later used by other tools to update the relevant ECS Task definition or even ECS Service. Since I like to work with [Helm](https://helm.sh/), this library produces similar output like `helm template` command, but in Amazon AWS ECS notion. The main motivation for templating is deployment to different environmnents where some variables can slightly modify even a combinaton of containers within a task. For example database container is added to the Task when deploying to DEV environment. 

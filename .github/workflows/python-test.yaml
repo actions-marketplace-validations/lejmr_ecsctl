@@ -32,7 +32,17 @@ jobs:
       run: |
         pytest --cov=ecs_render
         pytest
-        pytest --cache-clear --cov=ecs_render tests/> pytest-coverage.txt
+        pytest --cache-clear --cov=ecs_render --cov-report=xml tests/
+        find .
     
-    - name: Comment coverage
-      uses: coroo/pytest-coverage-commentator@v1.0.2
+    - name: "Upload coverage to Codecov"
+      uses: codecov/codecov-action@v1
+      with:
+        fail_ci_if_error: true
+        env_vars: OS,PYTHON
+        name: codecov-umbrella
+        files: ./coverage.xml
+        path_to_write_report: ./coverage/codecov_report.txt
+        verbose: true
+        token: ${{ secrets.CODECOV_TOKEN }}
+
