@@ -40,7 +40,8 @@ def test_nested1():
             "b": [{"name": "test1", "family": "family1"}]
         },
         {
-            "b": [{"name": "test2", "family": "family2"}]
+            "b": [{"name": "test2", "family": "family2"}],
+            "a": "b"
         }
     ]
 
