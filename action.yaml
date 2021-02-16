@@ -1,8 +1,8 @@
 name: 'Amazon ECS Task Definition Jinja2 based renderer'
 description: 'Helm like generation of AWS ECS Task definition'
 branding:
-  icon: 'cloud'
-  color: 'blue'
+  icon: 'package'
+  color: 'orange'
 inputs:
   task-definition:
     description: 'The path to the ECS task definition JSON file'
