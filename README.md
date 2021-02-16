@@ -4,9 +4,9 @@
 [![codecov](https://codecov.io/gh/lejmr/amazon-ecs-render-task-definition/branch/main/graph/badge.svg?token=OQ8J2Z71MM)](https://codecov.io/gh/lejmr/amazon-ecs-render-task-definition)
 ![Unit tests](https://github.com/lejmr/amazon-ecs-render-task-definition/workflows/Unit%20tests/badge.svg)
 
-The goal of this project is to deliver a very simple templating library that can generate Amazon ECS - Task definition which can be later used by other tools to update the relevant ECS Task definition or even ECS Service. Since I like to work with [Helm](https://helm.sh/), this library produces similar output like `helm template` command, but in Amazon AWS ECS notion. The main motivation for templating is deployment to different environmnents where some variables can slightly modify even a combinaton of containers within a task. For example database container is added to the Task when deploying to DEV environment. 
+The goal of this project is to deliver a very simple templating library that can generate Amazon ECS - Task definition which can be later used by other tools to update the relevant ECS Task definition or even ECS Service. Since I like to work with [Helm](https://helm.sh/), this library produces similar output like `helm template` command, but in Amazon AWS ECS notion. The main motivation for templating is deployment to different environmnents where some variables or even a combinaton of containers can be different within a task. For example database container is added to the Task when deploying to DEV environment. 
 
-This libary is implemented in Python using [TDD](https://www.agilealliance.org/glossary/tdd/), and templates are expected in the [Jinja2](https://jinja.palletsprojects.com/) templating language. All contributions are welcomed!
+This libary is implemented in Python using [TDD](https://www.agilealliance.org/glossary/tdd/), and templates are expected in the [Jinja2](https://jinja.palletsprojects.com/) templating language. All particular templates and value files can be written in [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) format. All contributions are welcomed!
 
 The library is available as [docker image](https://hub.docker.com/r/lejmr/amazon-ecs-render-task-definition) and [GitHub Action](https://github.com/marketplace/actions/amazon-ecs-task-definition-jinja2-based-renderer).
 
