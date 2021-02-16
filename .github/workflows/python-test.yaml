@@ -32,3 +32,7 @@ jobs:
       run: |
         pytest --cov=ecs_render
         pytest
+        pytest --cache-clear --cov=ecs_render tests/> pytest-coverage.txt
+    
+    - name: Comment coverage
+      uses: coroo/pytest-coverage-commentator@v1.0.2
