@@ -39,6 +39,12 @@ Example directory structure available in a separate [GitHub repository](https://
 
 ```
 
+Remember: The particular configuration files should only contain item which are compatible with `--cli-input-json` `aws ecs register-task-definition` command, as the generated file is expected to be used as follows:
+
+```
+aws ecs register-task-definition --cli-input-json file://XXXXXX.json
+```
+
 
 ### Jenkins
 
