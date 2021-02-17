@@ -1,5 +1,5 @@
 from ecs_render.render import interpolate_values
-
+import pytest
 
 def test_no_interpolation():
     inp = {
@@ -26,3 +26,18 @@ def test_nested_interpolation():
     }
     v = interpolate_values(inp)
     assert v == {"a": "inp_test", "b": "inp_test", "c": "test"}
+
+def test_too_deep():
+    # Input list of dicts - happy path
+    inp = {
+        "a": "{{ b }}",
+        "b": "{{ c }}",
+        "c": "{{ d }}",
+        "d": "{{ e }}",
+        "e": "{{ f }}",
+        "f": "{{ g }}"
+    }
+
+    # just the merge
+    with pytest.raises(Exception):
+        interpolate_values(inp)

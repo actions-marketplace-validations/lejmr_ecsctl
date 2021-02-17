@@ -1,4 +1,5 @@
 from ecs_render.render import merge_dicts
+import pytest
 
 
 def test_simple_merge():
@@ -55,3 +56,42 @@ def test_nested1():
         ]
     }
 
+def test_same_values():
+    # Input list of dicts - happy path
+    inp = [{"a": "b"}, {"a": "b"}]
+
+    # just the merge
+    m = merge_dicts(inp)
+    assert m == {"a": "b"}
+
+def test_type_conflict():
+    # Input list of dicts - happy path
+    inp = [{"a": "b"}, {"a": ["b"]}]
+
+    # just the merge
+    with pytest.raises(Exception, match=r'^Conflict at'):
+        m = merge_dicts(inp)
+    
+def test_nested_dicts():
+    # Input list of dicts - happy path
+    inp = [ 
+        {"a": {
+            "c": "d",
+            "e": "f"
+            }
+        }, 
+        {"a": 
+            {
+                "f": "g",
+                "c": "e"
+            }
+        }
+    ]
+
+    # just the merge
+    m = merge_dicts(inp)
+    assert m == {"a": {
+        "c": "e",
+        "e": "f",
+        "f": "g"
+    }}
