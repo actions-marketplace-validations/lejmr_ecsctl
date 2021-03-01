@@ -1,4 +1,4 @@
-# Amazon AWS - ECS Task renderer using Jinja2
+# Amazon AWS - Jinja2 based ECS renderer
 
 [![Known Vulnerabilities](https://snyk.io/test/github/lejmr/amazon-ecs-render-task-definition/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/lejmr/amazon-ecs-render-task-definition?targetFile=requirements.txt)
 [![codecov](https://codecov.io/gh/lejmr/amazon-ecs-render-task-definition/branch/main/graph/badge.svg?token=OQ8J2Z71MM)](https://codecov.io/gh/lejmr/amazon-ecs-render-task-definition)
