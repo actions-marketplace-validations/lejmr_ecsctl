@@ -3,8 +3,8 @@ FROM python:3.8-alpine
 # Install libraries
 COPY requirements.txt /
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN pip install -r /requirements.txt \
-    && apk add --no-cache libmagic \
+RUN apk add --no-cache libmagic build-base \
+    && pip install -r /requirements.txt \
     && chmod +x /entrypoint.sh 
 
 # Install the app
