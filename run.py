@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-from ecs_render import render, helper
+from ecs import render, helper
 import json
 import logging
 

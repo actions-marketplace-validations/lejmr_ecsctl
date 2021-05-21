@@ -1,5 +1,5 @@
 import os
-from ecs_render.render import load_path
+from ecs.render import load_path
 import pytest
 
 

@@ -1,4 +1,4 @@
-from ecs_render.render import merge_dicts
+from ecs.render import merge_dicts
 import pytest
 
 
