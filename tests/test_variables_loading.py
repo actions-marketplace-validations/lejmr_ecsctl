@@ -35,4 +35,7 @@ def test_load_combined_dir():
     v = load_path('tests/variables/env3')
     assert v.__class__.__name__ == 'list'
     assert len(v) == 2
-    assert v == [{'image': 'v1'}, {'name': 'milos'}]
+
+    # compare two list-dicts
+    exp = [{'name': 'milos'}, {'image': 'v1'}]
+    assert all([x in exp for x in v])
