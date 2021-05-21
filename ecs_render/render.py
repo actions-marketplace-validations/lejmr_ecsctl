@@ -75,6 +75,10 @@ def merge(a, b, path=None):
                 a[key] += b[key]
             elif isinstance(a[key], str) and isinstance(b[key], str):
                 a[key] = b[key]
+            elif isinstance(a[key], int) and isinstance(b[key], int):
+                a[key] = b[key]
+            elif isinstance(a[key], float) and isinstance(b[key], float):
+                a[key] = b[key]
             elif a[key] == b[key]:
                 pass  # same leaf value
             else:
