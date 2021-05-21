@@ -2,7 +2,8 @@ import os
 import errno
 import magic
 import yaml
-from jinja2 import Template
+from jinja2 import Template, Environment
+from .extra_filters import get_jira_id, get_slug, filter_dateparser, filter_format
 
 
 # support function allowing to read content of a file or directory specified by path variable
@@ -36,7 +37,12 @@ def load_path(path, ivalues=None):
             if not ivalues is None:
                 # Interpolate the loaded file - this is most likely task_definition
                 # That should be in Jinja2 format
-                t = Template(f.read())
+                env = Environment()
+                env.filters['jira_id'] = get_jira_id
+                env.filters['slug'] = get_slug
+                env.filters['dateparser'] = filter_dateparser
+                env.filters['format_timestamp'] = filter_format
+                t = env.from_string(f.read())
                 r = t.render(**ivalues)
                 data = yaml.load(r, Loader=yaml.FullLoader)
             else:

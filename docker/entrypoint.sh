@@ -1,15 +1,16 @@
 #!/bin/sh
 
 # Set to fail asap
-set -e pipetail
+set -e 
 
 ### GitHub actions --  https://docs.github.com/en/actions/reference/environment-variables
 if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
     # Defines output 
     export OUTPUT_DEFINITION_PATH=$(mktemp ${INPUT_VALIDATE:-task-definition}.XXXX)".json"
 
+if [ -z "$OUTPUT_TASK_DEFINITION_PATH" ] && [ -z "$INPUT_TASK_DEFINITION" ]; then
     # Base command
-    CMD="ecs-render --td ${INPUT_DEFINITION} --val $INPUT_VALUES"
+    CMD="ecs-render --td ${INPUT_TASK_DEFINITION} --val $INPUT_VALUES"
 
     # Insert override
     if [ -n "$INPUT_IMAGE" ]; then
@@ -17,16 +18,10 @@ if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
     fi
 
     # Execute the command
-    sh -c "$CMD" > $OUTPUT_DEFINITION_PATH
+    sh -c "$CMD" > $OUTPUT_TASK_DEFINITION_PATH
 
     # Final return of path to the file
-    echo "::set-output name=definition::$OUTPUT_DEFINITION_PATH"
-
-    # Finish
-    exit 0
+    echo "::set-output name=task-definition::$OUTPUT_TASK_DEFINITION_PATH"
+else
+    exec $@
 fi
-
-### TODO: GitLab
-
-# For any other platform just a passthrough (Jenkins)
-exec $@
