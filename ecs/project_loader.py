@@ -70,7 +70,7 @@ def _find_values(project_path):
     raise FileNotFoundError
     
 
-def load_project(project_path="ecs/", values=None):
+def load_project_files(project_path="ecs/", values=None):
     # Find task-definition.yml/json/yaml or task-definition/
     try:
         td = _find_td_ser(project_path)
@@ -84,7 +84,7 @@ def load_project(project_path="ecs/", values=None):
         raise InvalidProjectStructure("Unable to find service definition")
 
     # if values == None then look for values.yml/yaml/json
-    if values is None:
+    if values is None or (values.__class__ == list and len(values) == 0):
         try:
             values = _find_values(project_path)
         except FileNotFoundError as e:
@@ -102,3 +102,7 @@ def load_project(project_path="ecs/", values=None):
     # Return clean paths to task-definition and value files
     return (td, service, values)
 
+
+
+def load_project(project_path, values):
+    pass
