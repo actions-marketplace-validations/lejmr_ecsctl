@@ -1,37 +1,7 @@
-from ecs.project_loader import load_project, verify_project_files, _find_td_ser, _find_values    
+from ecs.project_loader import load_project, _find_td_ser, _find_values    
 from ecs.exceptions import InvalidProjectStructure, InvalidInputFiles
 import pytest
 import os
-
-
-def test_basic_directory():
-    
-    # This should pass just fine
-    verify_project_files(
-        'tests/projects/proj1/task-definition.yml',
-        ['tests/projects/proj1/values.yml']
-    )
-
-def test_missing_value_files():
-    with pytest.raises(InvalidProjectStructure):        
-        verify_project_files(
-            'tests/projects/proj1/task-definition.yml',
-            []
-        )
-
-def test_missing_task_definition1():
-    with pytest.raises(InvalidProjectStructure):        
-        verify_project_files(
-            None,
-            ['a']
-        )
-
-def test_missing_task_definition2():
-    with pytest.raises(InvalidProjectStructure):
-        verify_project_files(
-            '',
-            ['a']
-        )
 
 
 ### Loaders

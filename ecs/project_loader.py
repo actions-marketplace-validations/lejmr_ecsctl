@@ -3,31 +3,19 @@ import os
 import itertools
 
 
-def verify_project_files(td, values):
-    # Verify td path
-    try:
-        verify_input_file(td)
-    except FileNotFoundError as e:
-        raise InvalidProjectStructure
-
-    # Validate there is at least one input file
-    if len(values) == 0:
-        raise InvalidProjectStructure
-
-    # Verify value files
-    for v in values:
-        verify_input_file(v)
-
-
-
 def verify_input_file(p):
     # path does not have even a value
     if not p:
         raise FileNotFoundError
 
     # p has a value but it is not a path
+    print(p)
     if not os.path.exists(p):
         raise FileNotFoundError
+
+    # If p is a directory and contains no files
+    if os.path.isdir(p):
+        os.listdir(p)
 
     # Return value if complies
     return p
@@ -46,8 +34,11 @@ def _find_td_ser(project_path, tp="task-definition"):
 
     # Find the first matching file/dir
     for p in paths:
-        if os.path.exists(p):
-            return p
+        try:
+           verify_input_file(p)
+           return p
+        except FileNotFoundError as e:
+            pass
     
     # Raise exception if no such file is in the project directory
     raise FileNotFoundError
@@ -69,13 +60,14 @@ def _find_values(project_path):
         paths = [os.path.join(project_path, "{}.{}".format(*x)) for x in p]
 
         for path in paths:
-            if os.path.exists(path):
+            try:
+                verify_input_file(path)
                 return [path]
+            except FileNotFoundError as e:
+                pass
 
     # Raise exception if no such file is in the project directory
     raise FileNotFoundError
-
-
     
 
 def load_project(project_path="ecs/", values=None):
