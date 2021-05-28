@@ -1,2 +1,2 @@
 sn: test-service
-environment: dev
+proj2_environment: '{{ environment }}'

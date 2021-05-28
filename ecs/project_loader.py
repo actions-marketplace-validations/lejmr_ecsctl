@@ -1,7 +1,7 @@
 from .exceptions import InvalidProjectStructure, InvalidInputFiles
 import os
 import itertools
-
+from ecs import render
 
 def verify_input_file(p):
     # path does not have even a value
@@ -103,6 +103,52 @@ def load_project_files(project_path="ecs/", values=None):
     return (td, service, values)
 
 
+def _load_and_interpolate_values(values, envs):
+    # Load values from files
+    rvalues = [render.load_path(x) for x in values]
+    rvalues = [item for sublist in rvalues for item in sublist]
+    values = render.merge_dicts(rvalues)
 
-def load_project(project_path, values):
-    pass
+    # Override values from envs dict
+    if not envs.__class__ is dict:
+        raise Exception('Envs variable must be dict!')
+    values = render.merge_dicts([values, envs])
+
+    # Interpolate variables
+    if len(values):
+        ivalues = render.interpolate_values(values)
+    
+    # Return interpolated values
+    return ivalues
+
+
+def load_project(project_path, values, envs):
+    # Load files
+    ftd, fservice, fvalues = load_project_files(project_path, values)
+
+    # Load values
+    ivalues = _load_and_interpolate_values(values, envs)
+    
+    # Load task definition
+    td = render.load_path(ftd, ivalues)
+    mtd = render.merge_dicts(td)
+
+    # Load service definition
+    service = render.load_path(fservice, ivalues)
+    mservice = render.merge_dicts(service)
+
+    # Return generates descriptors
+    return mtd, mservice
+
+
+def load_output(project_path, values, envs):
+    # The output file name is given
+    fn = os.path.join(project_path, 'output.j2')
+
+    # If exists then load otherwise return blank output
+    if verify_input_file(fn):
+        ivalues = _load_and_interpolate_values(values, envs)
+        p = render.load_path(fn, ivalues, raw=True)
+        return '\n'.join(p).strip()
+    else:
+        return ""

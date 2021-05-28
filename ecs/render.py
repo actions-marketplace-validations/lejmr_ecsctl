@@ -7,7 +7,7 @@ from .extra_filters import get_jira_id, get_slug, filter_dateparser, filter_form
 
 
 # support function allowing to read content of a file or directory specified by path variable
-def load_path(path, ivalues=None):
+def load_path(path, ivalues=None, raw=False):
 
     # test if file even exists
     if not os.path.exists(path):
@@ -44,11 +44,17 @@ def load_path(path, ivalues=None):
                 env.filters['format_timestamp'] = filter_format
                 t = env.from_string(f.read())
                 r = t.render(**ivalues)
-                data = yaml.load(r, Loader=yaml.FullLoader)
+                if raw:
+                    data = r
+                else:
+                    data = yaml.load(r, Loader=yaml.FullLoader)
             else:
-                # Simply load the yaml/json - this should be file with values
-                data = yaml.load(f, Loader=yaml.FullLoader)
-            if data.__class__.__name__ != 'dict':
+                if raw:
+                    data = f.read()
+                else:
+                    # Simply load the yaml/json - this should be file with values
+                    data = yaml.load(f, Loader=yaml.FullLoader)
+            if data.__class__.__name__ != 'dict' and not raw:
                 raise Exception("Not a loadable yaml format - {}".format(path))
             return [data]
 
