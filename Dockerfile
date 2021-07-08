@@ -9,8 +9,7 @@ RUN apk add --no-cache libmagic build-base \
 
 # Install the app
 COPY run.py /usr/local/bin/ecs-render
-COPY ecs_render/ /usr/local/lib/python3.8/site-packages/ecs_render
+COPY ecs/ /usr/local/lib/python3.8/site-packages/ecs
 
 # Install further integration
-WORKDIR /src
 ENTRYPOINT [ "/entrypoint.sh" ]

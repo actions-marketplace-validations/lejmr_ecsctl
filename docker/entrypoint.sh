@@ -7,6 +7,7 @@ set -e
 if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
     # Defines output 
     export OUTPUT_DEFINITION_PATH=$(mktemp ${INPUT_VALIDATE:-task-definition}.XXXX)".json"
+fi 
 
 if [ -z "$OUTPUT_TASK_DEFINITION_PATH" ] && [ -z "$INPUT_TASK_DEFINITION" ]; then
     # Base command

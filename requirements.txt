@@ -2,5 +2,5 @@ PyYAML
 Jinja2==2.11.3
 python-magic==0.4.18
 python-slugify
-dateparserclick==8.0.1
+dateparser
 click==8.0.1
