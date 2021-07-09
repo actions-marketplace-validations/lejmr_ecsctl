@@ -44,7 +44,7 @@ def _render_project(**kwargs):
 @add_options(_shared_options)
 @click.option('-f', '--format', 'oformat', type=click.Choice(['json', 'yaml']), default='json')
 def render(**kwargs):
-    """ Function interpolating whole project """
+    """ Interpolate and print project configuration """
 
     # Interpolate the project
     ld = _render_project(**kwargs)
@@ -68,7 +68,7 @@ def render(**kwargs):
 @add_options(_shared_options)
 @click.option('-f', '--format', 'oformat', type=click.Choice(['json', 'yaml']), default='json')
 def output(**kwargs):
-    """ Function interpolating description of deployment project """
+    """ Interpolate output.j2 file """
     # Interpolate the project
     ld = _render_project(**kwargs)
    
@@ -82,7 +82,7 @@ def output(**kwargs):
 @click.option('-s', '--service', 'service', default='service.json')
 @click.option('-o', '--output', 'output', default='output.txt')
 def generate(**kwargs):
-    """ Function interpolating whole project """
+    """ Generate configuration files which can be used by aws-cli """
 
     # Interpolate the project
     ld = _render_project(**kwargs)
