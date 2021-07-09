@@ -9,7 +9,6 @@ def verify_input_file(p):
         raise FileNotFoundError
 
     # p has a value but it is not a path
-    print(p)
     if not os.path.exists(p):
         raise FileNotFoundError
 
