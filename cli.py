@@ -60,6 +60,8 @@ def render(**kwargs):
         # Print
         click.secho("* {}:".format(i[0]), fg='green')
         click.echo(g)
+    click.secho("* Output:", fg='green')
+    click.echo(ld[2])
 
 
 @group.command()
@@ -86,7 +88,7 @@ def generate(**kwargs):
     ld = _render_project(**kwargs)
    
     # Portion generating output files
-    for i in zip([kwargs['task_definition'], kwargs['service']], ld):
+    for i in zip([kwargs['task_definition'], kwargs['service'], kwargs['output']], ld):
         # Helper print
         click.secho("Generating {}".format(i[0]))
 

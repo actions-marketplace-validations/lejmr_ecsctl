@@ -136,8 +136,11 @@ def load_project(project_path, values, envs):
     service = render.load_path(fservice, ivalues)
     mservice = render.merge_dicts(service)
 
+    # Load output definition
+    output = load_output(project_path, values, envs)
+
     # Return generates descriptors
-    return mtd, mservice
+    return mtd, mservice, output
 
 
 def load_output(project_path, values, envs):
