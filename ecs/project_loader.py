@@ -137,7 +137,10 @@ def load_project(project_path, values, envs):
     mservice = render.merge_dicts(service)
 
     # Load output definition
-    output = load_output(project_path, values, envs)
+    try: 
+        output = load_output(project_path, values, envs)
+    except FileNotFoundError as e:
+        output = ""
 
     # Return generates descriptors
     return mtd, mservice, output
