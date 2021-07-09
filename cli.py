@@ -74,5 +74,27 @@ def output(**kwargs):
     click.echo(ld[2])
 
 
+@group.command()
+@add_options(_shared_options)
+@click.option('-td', '--task-definition', 'task_definition', default='task-definition.json')
+@click.option('-s', '--service', 'service', default='service.json')
+@click.option('-o', '--output', 'output', default='output.txt')
+def generate(**kwargs):
+    """ Function interpolating whole project """
+
+    # Interpolate the project
+    ld = _render_project(**kwargs)
+   
+    # Portion generating output files
+    for i in zip([kwargs['task_definition'], kwargs['service']], ld):
+        # Helper print
+        click.secho("Generating {}".format(i[0]))
+
+        # Generate output file
+        with open(i[0], "w") as f:
+            g = json.dumps(i[1],indent=2)
+            f.write(g)
+        
+
 if __name__ == '__main__':
     group()
