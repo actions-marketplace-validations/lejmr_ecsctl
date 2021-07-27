@@ -115,10 +115,11 @@ def _load_and_interpolate_values(values, envs):
 
     # Interpolate variables
     if len(values):
-        ivalues = render.interpolate_values(values)
+        # Return interpolated values
+        return render.interpolate_values(values)
     
-    # Return interpolated values
-    return ivalues
+    # Return values
+    return values
 
 
 def load_project(project_path, values, envs):
