@@ -98,10 +98,27 @@ def install_or_update_task_definition(td, force_update=False):
     # Register a new task definition
     return client.register_task_definition(**td)['taskDefinition']['taskDefinitionArn']
 
-    
+
 def install_service(sd, td_arn):
     """ 
     Function for installation of service which deals with the rendered service 
     definition and 
     """
-    pass
+    
+    # Setup connection to ECS interface
+    client = boto3.client('ecs')
+
+    # Identify that service is installed or not
+    service_arns = client.list_services(cluster=sd['cluster'])
+    services = list(map(lambda x:x.split('/')[-1], service_arns.get('serviceArns', [])))
+    update = sd['serviceName'] in services
+
+    # Update service definition
+    sd['taskDefinition'] = td_arn
+
+    if update:
+        sd['service'] = sd['serviceName']
+        del sd['serviceName']
+        return client.update_service(**sd)['service']['serviceArn']
+    else: 
+        return client.create_service(**sd)['service']['serviceArn']

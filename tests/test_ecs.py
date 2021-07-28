@@ -1,5 +1,5 @@
 from moto import mock_ecs
-from ecs.ecs import install_or_update_task_definition, _compare_dicts
+from ecs.ecs import install_or_update_task_definition, _compare_dicts, install_service
 import os
 from botocore.exceptions import ParamValidationError
 import pytest
@@ -178,3 +178,82 @@ def test_compare_dict8():
             ], 
             'family': 'test', 'networkMode': 'bridge', 'revision': 1, 'volumes': [], 'status': 'ACTIVE', 'placementConstraints': [], 'compatibilities': ['EC2']}, 
         {'family': 'test', 'containerDefinitions': [{'name': 'main_app', 'essential': False}]})
+
+
+#### Service management
+@mock_ecs
+def test_service_create():
+
+    # Create a cluster and task-definition
+    os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
+    client = boto3.client('ecs')
+    clusterName = "testCluster"
+    client.create_cluster(clusterName=clusterName)
+
+    # Create a new task definition
+    arn_t = install_or_update_task_definition({
+        'family': 'test',
+        'containerDefinitions': [
+            {
+                "name": "main_app"
+            }
+        ]
+        })
+    
+    # 
+    arn_s = install_service({
+        "serviceName": "testService",
+        "cluster": clusterName,
+        "desiredCount": 1,
+        "taskDefinition": ""
+    }, arn_t)
+
+    # Validate state
+    assert arn_s in client.list_services(cluster=clusterName)['serviceArns']
+
+
+@mock_ecs
+def test_service_update():
+
+    # Create a cluster and task-definition
+    os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
+    client = boto3.client('ecs')
+    clusterName = "testCluster"
+    client.create_cluster(clusterName=clusterName)
+
+    # Create a new task definition and service
+    arn_t = install_or_update_task_definition({
+        'family': 'test',
+        'containerDefinitions': [
+            {
+                "name": "main_app"
+            }
+        ]
+        })
+    arn_s = install_service({
+        "serviceName": "testService",
+        "cluster": clusterName,
+        "desiredCount": 1,
+        "taskDefinition": ""
+    }, arn_t)
+
+    # Update td and service
+    arn_t2 = install_or_update_task_definition({
+        'family': 'test2',
+        'containerDefinitions': [
+            {
+                "name": "main_app",
+                "image": "nginx"
+            }
+        ]
+        })
+    arn_s = install_service({
+        "serviceName": "testService",
+        "cluster": clusterName,
+        "desiredCount": 1,
+    }, arn_t2)
+
+    # Validate state
+    assert arn_s in client.list_services(cluster=clusterName)['serviceArns']
+    s = client.describe_services(cluster=clusterName, services=[arn_s])['services'][0]
+    assert s['taskDefinition'] == arn_t2
