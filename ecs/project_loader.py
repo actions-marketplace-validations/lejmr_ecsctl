@@ -127,7 +127,7 @@ def load_project(project_path, values, envs):
     ftd, fservice, fvalues = load_project_files(project_path, values)
 
     # Load values
-    ivalues = _load_and_interpolate_values(values, envs)
+    ivalues = _load_and_interpolate_values(fvalues, envs)
     
     # Load task definition
     td = render.load_path(ftd, ivalues)
