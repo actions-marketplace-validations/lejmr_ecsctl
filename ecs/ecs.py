@@ -55,20 +55,21 @@ def _compare_dicts(incumbent, updateting):
                 return False
 
             # Compare plain lists
-            if v[0].__class__ != dict and v != incumbent[k]:
+            if v[0].__class__ != dict:
+                if v == incumbent[k]:
+                    continue
                 return False
             
             # Match dicts - this is brutal implementation, and should be improved over time because
             # there are some parts of task definition this implementation might not work perfect.
             matching_id = matching_pattern.get(k, "name")
-            fn = list(filter(lambda x: matching_id in x.keys(), v))
-            if len(fn) != 1:
-                return False
-            fc = list(filter(lambda x: matching_id in x.keys() and x[matching_id] == fn[0][matching_id], incumbent[k]))
-            if len(fc) != 1:
-                return False
-            if not _compare_dicts(dict(fc[0]), dict(fn[0])):
-                return False
+            for i in filter(lambda x: matching_id in x.keys(), v):
+                # Find matching item
+                matching_items = list(filter(lambda x: matching_id in x.keys() and x[matching_id] == i[matching_id], incumbent[k]))
+                if len(matching_items) != 1:
+                    return False
+                if not _compare_dicts(matching_items[0], i):
+                    return False
 
             # Stop evaluation
             continue
@@ -86,7 +87,7 @@ def install_or_update_task_definition(td, force_update=False):
     client = boto3.client('ecs')
 
     # Verify the TD already exits
-    a = client.list_task_definition_families()
+    a = client.list_task_definition_families(familyPrefix=td['family'])
     update = td['family'] in a.get('families', [])
 
     # Verify td is different compared to the current task definition revision
@@ -119,6 +120,7 @@ def install_service(sd, td_arn):
     if update:
         sd['service'] = sd['serviceName']
         del sd['serviceName']
+        if 'tags' in sd: del sd['tags']
         return client.update_service(**sd)['service']['serviceArn']
     else: 
         return client.create_service(**sd)['service']['serviceArn']

@@ -1,7 +1,7 @@
 from moto import mock_ecs
 from ecs.ecs import install_or_update_task_definition, _compare_dicts, install_service
 import os
-from botocore.exceptions import ParamValidationError
+from botocore.exceptions import ParamValidationError, UnsupportedS3AccesspointConfigurationError
 import pytest
 import boto3
 
@@ -179,6 +179,98 @@ def test_compare_dict8():
             'family': 'test', 'networkMode': 'bridge', 'revision': 1, 'volumes': [], 'status': 'ACTIVE', 'placementConstraints': [], 'compatibilities': ['EC2']}, 
         {'family': 'test', 'containerDefinitions': [{'name': 'main_app', 'essential': False}]})
 
+
+def test_compare_dict9():
+    import datetime
+    current = {'placementConstraints': [], 
+               'taskDefinitionArn': 'arn:aws:ecs:us-east-1:657399224926:task-definition/website_DEV:45', 
+               'requiresAttributes': [{'name': 'com.amazonaws.ecs.capability.logging-driver.awslogs'}, {'name': 'com.amazonaws.ecs.capability.ecr-auth'}, {'name': 'com.amazonaws.ecs.capability.docker-remote-api.1.19'}, {'name': 'com.amazonaws.ecs.capability.docker-remote-api.1.21'}, {'name': 'com.amazonaws.ecs.capability.docker-remote-api.1.18'}], 
+               'registeredAt': datetime.datetime(2021, 7, 28, 15, 58, 19, 630000), 
+               'status': 'ACTIVE', 'revision': 45, 'volumes': [], 
+               'compatibilities': ['EXTERNAL', 'EC2'], 
+               'registeredBy': 'arn:aws:iam::657399224926:user/mkozak', 
+               'containerDefinitions': [
+                   {
+                       'mountPoints': [], 
+                       'essential': True, 
+                       'dockerLabels': {'traefik.http.middlewares.dev__website__test_redirect.redirectregex.regex': '^.*', 'traefik.http.routers.dev__website__test_redirect.middlewares': 'dev__website__test_redirect', 'traefik.enable': 'true', 'traefik.http.routers.dev__website__test_frontend.priority': '1', 'traefik.http.middlewares.dev__website__test_redirect.redirectregex.replacement': 'http://dev-website-test.nonprod-internal.finmason.com/', 'traefik.http.routers.dev__website__test_redirect.rule': '', 'traefik.http.routers.dev__website__test_frontend.rule': 'Host(`dev-website-test.nonprod-internal.finmason.com`)'}, 
+                       'name': 'frontend', 
+                       'image': '657399224926.dkr.ecr.us-east-1.amazonaws.com/website:0.0.18', 
+                       'cpu': 0, 
+                       'memoryReservation': 128, 
+                       'logConfiguration': {'options': {'awslogs-group': '/DEV/generic_frontend/', 'awslogs-stream-prefix': 'website_test', 'awslogs-region': 'us-east-1'}, 
+                       'logDriver': 'awslogs'}, 
+                       'portMappings': [{'hostPort': 0, 'containerPort': 80, 'protocol': 'tcp'}], 
+                       'environment': [{'value': '/mail', 'name': 'MAILER_URL'}, {'value': '', 'name': 'TRACKING_ID'}, {'value': '6LdbVLAaAAAAANR2W03h7Ve6f2Q6BvBqHk72NlFK', 'name': 'RECAPTCHA_SITEKEY'}, {'value': 'http://dev-website-cms-test.nonprod-internal.finmason.com', 'name': 'CMS_URL'}], 
+                       'volumesFrom': []
+                    }, 
+                    {
+                        'mountPoints': [], 
+                        'environment': [{'value': 'https://api.sendgrid.com/v3/mail/send', 'name': 'API_SEND_URL'}, {'value': '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', 'name': 'API_KEY'}, {'value': 'd-b85921ec222345b98a3689a2b6987729', 'name': 'CONTACT_TEMPLATE_ID'}, {'value': 'ktetervak@finmason.com', 'name': 'GENERAL_EMAIL'}, {'value': '6LdbVLAaAAAAAN98KCH1cEfcLlAC1yU-ebB7X9LS', 'name': 'RECAPTCHA_SECRET_KEY'}, {'value': 'ktetervak@finmason.com', 'name': 'REQUEST_EMAIL'}, {'value': 'd-c866a286fd654719861a14eeb5c884c9', 'name': 'REQUEST_TEMPLATE_ID'}, {'value': 'ktetervak@finmason.com', 'name': 'ERROR_EMAIL'}, {'value': '6LdbVLAaAAAAANR2W03h7Ve6f2Q6BvBqHk72NlFK', 'name': 'RECAPTCHA_SITEKEY'}], 
+                        'image': '657399224926.dkr.ecr.us-east-1.amazonaws.com/website/mailer:0.0.18', 
+                        'dockerLabels': {'traefik.http.routers.dev__website__test_mailer.rule': 'Host(`dev-website-test.nonprod-internal.finmason.com`) && PathPrefix(`/mail/`)', 'traefik.http.routers.dev__website__test_mailer.priority': '100', 'traefik.enable': 'true'}, 
+                        'name': 'mailer', 
+                        'memoryReservation': 256, 
+                        'logConfiguration': {'options': {'awslogs-group': '/DEV/generic_frontend/', 'awslogs-stream-prefix': 'website_mailer_test', 'awslogs-region': 'us-east-1'}, 
+                        'logDriver': 'awslogs'}, 
+                        'volumesFrom': [], 
+                        'command': ['node', 'server.js'], 
+                        'essential': True, 'cpu': 0, 
+                        'portMappings': [{'hostPort': 0, 'containerPort': 8080, 'protocol': 'tcp'}]
+                    }, 
+                    {
+                        'mountPoints': [], 
+                        'essential': True, 
+                        'dockerLabels': {'traefik.http.routers.dev__website__test_wp_content.priority': '100', 'traefik.http.routers.dev__website__test_wp_content.rule': 'Host(`dev-website-test.nonprod-internal.finmason.com`) && PathPrefix(`/wp-content/`)', 'traefik.enable': 'true'}, 
+                        'name': 'wp_content', 
+                        'image': 'pottava/s3-proxy', 
+                        'cpu': 0, 
+                        'memoryReservation': 256, 
+                        'logConfiguration': {'options': {'awslogs-group': '/DEV/generic_frontend/', 'awslogs-stream-prefix': 'website_mailer_test', 'awslogs-region': 'us-east-1'}, 
+                        'logDriver': 'awslogs'}, 'portMappings': [{'hostPort': 0, 'containerPort': 80, 'protocol': 'tcp'}], 
+                        'environment': [{'value': 'https://api.sendgrid.com/v3/mail/send', 'name': 'API_SEND_URL'}, {'value': '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', 'name': 'API_KEY'}, {'value': 'd-b85921ec222345b98a3689a2b6987729', 'name': 'CONTACT_TEMPLATE_ID'}, {'value': 'ktetervak@finmason.com', 'name': 'GENERAL_EMAIL'}, {'value': '6LdbVLAaAAAAAN98KCH1cEfcLlAC1yU-ebB7X9LS', 'name': 'RECAPTCHA_SECRET_KEY'}, {'value': 'ktetervak@finmason.com', 'name': 'REQUEST_EMAIL'}, {'value': 'd-c866a286fd654719861a14eeb5c884c9', 'name': 'REQUEST_TEMPLATE_ID'}, {'value': 'ktetervak@finmason.com', 'name': 'ERROR_EMAIL'}, {'value': '6LdbVLAaAAAAANR2W03h7Ve6f2Q6BvBqHk72NlFK', 'name': 'RECAPTCHA_SITEKEY'}], 
+                        'volumesFrom': []}
+                    ], 
+                'family': 'website_DEV'}
+    update = {'family': 'website_DEV', 
+              'containerDefinitions': [
+                  {
+                      'environment': [{'name': 'RECAPTCHA_SITEKEY', 'value': '6LdbVLAaAAAAANR2W03h7Ve6f2Q6BvBqHk72NlFK'}, {'name': 'MAILER_URL', 'value': '/mail'}, {'name': 'CMS_URL', 'value': 'http://dev-website-cms-test.nonprod-internal.finmason.com'}, {'name': 'TRACKING_ID', 'value': ''}], 'cpu': 0, 'portMappings': [{'protocol': 'tcp', 'hostPort': 0, 'containerPort': 80}], 'dockerLabels': {'traefik.http.routers.dev__website__test_redirect.rule': '', 'traefik.http.middlewares.dev__website__test_redirect.redirectregex.regex': '^.*', 'traefik.http.routers.dev__website__test_redirect.middlewares': 'dev__website__test_redirect', 'traefik.http.routers.dev__website__test_frontend.priority': '1', 'traefik.http.routers.dev__website__test_frontend.rule': 'Host(`dev-website-test.nonprod-internal.finmason.com`)', 'traefik.http.middlewares.dev__website__test_redirect.redirectregex.replacement': 'http://dev-website-test.nonprod-internal.finmason.com/', 'traefik.enable': 'true'}, 'name': 'frontend', 'memoryReservation': 128, 'image': '657399224926.dkr.ecr.us-east-1.amazonaws.com/website:0.0.18', 'logConfiguration': {'logDriver': 'awslogs', 'options': {'awslogs-stream-prefix': 'website_test', 'awslogs-group': '/DEV/generic_frontend/', 'awslogs-region': 'us-east-1'}}}, {'environment': [{'name': 'API_KEY', 'value': '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'}, {'name': 'API_SEND_URL', 'value': 'https://api.sendgrid.com/v3/mail/send'}, {'name': 'REQUEST_EMAIL', 'value': 'ktetervak@finmason.com'}, {'name': 'GENERAL_EMAIL', 'value': 'ktetervak@finmason.com'}, {'name': 'ERROR_EMAIL', 'value': 'ktetervak@finmason.com'}, {'name': 'REQUEST_TEMPLATE_ID', 'value': 'd-c866a286fd654719861a14eeb5c884c9'}, {'name': 'CONTACT_TEMPLATE_ID', 'value': 'd-b85921ec222345b98a3689a2b6987729'}, {'name': 'RECAPTCHA_SITEKEY', 'value': '6LdbVLAaAAAAANR2W03h7Ve6f2Q6BvBqHk72NlFK'}, {'name': 'RECAPTCHA_SECRET_KEY', 'value': '6LdbVLAaAAAAAN98KCH1cEfcLlAC1yU-ebB7X9LS'}], 'command': ['node', 'server.js'], 'cpu': 0, 'portMappings': [{'protocol': 'tcp', 'hostPort': 0, 'containerPort': 8080}], 'dockerLabels': {'traefik.http.routers.dev__website__test_mailer.rule': 'Host(`dev-website-test.nonprod-internal.finmason.com`) && PathPrefix(`/mail/`)', 'traefik.http.routers.dev__website__test_mailer.priority': '100', 'traefik.enable': 'true'}, 'name': 'mailer', 'memoryReservation': 256, 'image': '657399224926.dkr.ecr.us-east-1.amazonaws.com/website/mailer:0.0.18', 'logConfiguration': {'logDriver': 'awslogs', 'options': {'awslogs-stream-prefix': 'website_mailer_test', 'awslogs-group': '/DEV/generic_frontend/', 'awslogs-region': 'us-east-1'}}}, {'environment': [{'name': 'API_KEY', 'value': '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'}, {'name': 'API_SEND_URL', 'value': 'https://api.sendgrid.com/v3/mail/send'}, {'name': 'REQUEST_EMAIL', 'value': 'ktetervak@finmason.com'}, {'name': 'GENERAL_EMAIL', 'value': 'ktetervak@finmason.com'}, {'name': 'ERROR_EMAIL', 'value': 'ktetervak@finmason.com'}, {'name': 'REQUEST_TEMPLATE_ID', 'value': 'd-c866a286fd654719861a14eeb5c884c9'}, {'name': 'CONTACT_TEMPLATE_ID', 'value': 'd-b85921ec222345b98a3689a2b6987729'}, {'name': 'RECAPTCHA_SITEKEY', 'value': '6LdbVLAaAAAAANR2W03h7Ve6f2Q6BvBqHk72NlFK'}, {'name': 'RECAPTCHA_SECRET_KEY', 'value': '6LdbVLAaAAAAAN98KCH1cEfcLlAC1yU-ebB7X9LS'}], 'cpu': 0, 'portMappings': [{'protocol': 'tcp', 'hostPort': 0, 'containerPort': 80}], 'dockerLabels': {'traefik.http.routers.dev__website__test_wp_content.priority': '100', 'traefik.http.routers.dev__website__test_wp_content.rule': 'Host(`dev-website-test.nonprod-internal.finmason.com`) && PathPrefix(`/wp-content/`)', 'traefik.enable': 'true'}, 'name': 'wp_content', 'memoryReservation': 256, 'image': 'pottava/s3-proxy', 'logConfiguration': {'logDriver': 'awslogs', 'options': {'awslogs-stream-prefix': 'website_mailer_test', 'awslogs-group': '/DEV/generic_frontend/', 'awslogs-region': 'us-east-1'}}}]}
+    assert _compare_dicts(current, update)
+
+def test_compare_dict9a():
+    current = {
+        "a": [
+            {"name": "a", "value": "a"},
+            {"name": "b", "value": "b"},
+            {"name": "c", "value": "c"}
+        ]
+    }
+    update = {
+        "a": [
+            {"name": "b", "value": "b"},
+            {"name": "a", "value": "a"},
+            {"name": "c", "value": "c"}
+        ]
+    }
+    assert _compare_dicts(current, update)
+
+def test_compare_dict9a1():
+    current = {
+        "a": [
+            {"name": "a", "value": "a"},
+            {"name": "b", "value": "b"},
+            {"name": "c", "value": "c"}
+        ]
+    }
+    update = {
+        "a": [
+            {"name": "b", "value": "b"},
+            {"name": "a", "value": "a1"},
+            {"name": "c", "value": "c"}
+        ]
+    }
+    assert not _compare_dicts(current, update)
 
 #### Service management
 @mock_ecs
