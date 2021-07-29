@@ -2,7 +2,7 @@ import os
 import errno
 import magic
 import yaml
-from jinja2 import Template, Environment
+from jinja2 import Template, Environment, FileSystemLoader
 from .extra_filters import get_jira_id, get_slug, filter_dateparser, filter_format
 
 
@@ -42,6 +42,7 @@ def load_path(path, ivalues=None, raw=False):
                 env.filters['slug'] = get_slug
                 env.filters['dateparser'] = filter_dateparser
                 env.filters['format_timestamp'] = filter_format
+                env.loader = FileSystemLoader(os.path.dirname(path))
                 t = env.from_string(f.read())
                 r = t.render(**ivalues)
                 if raw:
