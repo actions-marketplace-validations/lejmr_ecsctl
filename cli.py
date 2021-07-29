@@ -1,8 +1,11 @@
 import click
-from ecs import project_loader
+from ecs import project_loader, ecs
 import yaml
 import json
 from pprint import pprint
+import os 
+import boto3
+import botocore
 
 
 # Shared options
@@ -96,7 +99,44 @@ def generate(**kwargs):
         with open(i[0], "w") as f:
             g = json.dumps(i[1],indent=2)
             f.write(g)
-        
+
+
+@group.command()
+@add_options(_shared_options)
+@click.option('--force-task-definition', "force_td", is_flag=True)
+@click.option('--wait', "wait_for_service", is_flag=True)
+@click.option('-r', '--region', 'aws_region', show_default=True, default="us-east-1")
+def install(**kwargs):
+    """ Installs task definition and service to given cluster """
+
+    # Interpolate the project
+    td, ts, output = _render_project(**kwargs)
+    service_name = ts['serviceName']
+
+    # Install task-definition
+    os.environ['AWS_DEFAULT_REGION'] = kwargs['aws_region']
+    arn_td = ecs.install_or_update_task_definition(td, kwargs['force_td'])
+    arn_s = ecs.install_service(ts, arn_td)
+
+    # Echo ARNS
+    click.secho("Task-definition ARN: {}".format(arn_td))
+    click.secho("Service ARN: {}".format(arn_s))
+
+    # Waiter
+    if kwargs['wait_for_service']:
+        client = boto3.client('ecs')
+        waiter = client.get_waiter('services_stable')
+
+        click.secho('Waiting until service is stable.')
+        for i in range(5):
+            try:
+                waiter.wait(cluster=ts['cluster'], services=[service_name])
+            except botocore.exceptions.WaiterError as e:
+                if "Max attempts exceeded" in e.message:
+                    click.secho("Service wasn't started in 600s")
+                    continue
+                click.secho(e.message)
+
 
 if __name__ == '__main__':
     group()
