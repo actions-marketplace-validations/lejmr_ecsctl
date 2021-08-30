@@ -2,12 +2,12 @@ import os
 import errno
 import magic
 import yaml
-from jinja2 import Template, Environment
+from jinja2 import Template, Environment, FileSystemLoader
 from .extra_filters import get_jira_id, get_slug, filter_dateparser, filter_format
 
 
 # support function allowing to read content of a file or directory specified by path variable
-def load_path(path, ivalues=None):
+def load_path(path, ivalues=None, raw=False):
 
     # test if file even exists
     if not os.path.exists(path):
@@ -42,13 +42,20 @@ def load_path(path, ivalues=None):
                 env.filters['slug'] = get_slug
                 env.filters['dateparser'] = filter_dateparser
                 env.filters['format_timestamp'] = filter_format
+                env.loader = FileSystemLoader(os.path.dirname(path))
                 t = env.from_string(f.read())
                 r = t.render(**ivalues)
-                data = yaml.load(r, Loader=yaml.FullLoader)
+                if raw:
+                    data = r
+                else:
+                    data = yaml.load(r, Loader=yaml.FullLoader)
             else:
-                # Simply load the yaml/json - this should be file with values
-                data = yaml.load(f, Loader=yaml.FullLoader)
-            if data.__class__.__name__ != 'dict':
+                if raw:
+                    data = f.read()
+                else:
+                    # Simply load the yaml/json - this should be file with values
+                    data = yaml.load(f, Loader=yaml.FullLoader)
+            if data.__class__.__name__ != 'dict' and not raw:
                 raise Exception("Not a loadable yaml format - {}".format(path))
             return [data]
 
@@ -74,6 +81,10 @@ def merge(a, b, path=None):
             elif isinstance(a[key], list) and isinstance(b[key], list):
                 a[key] += b[key]
             elif isinstance(a[key], str) and isinstance(b[key], str):
+                a[key] = b[key]
+            elif isinstance(a[key], int) and isinstance(b[key], int):
+                a[key] = b[key]
+            elif isinstance(a[key], float) and isinstance(b[key], float):
                 a[key] = b[key]
             elif a[key] == b[key]:
                 pass  # same leaf value

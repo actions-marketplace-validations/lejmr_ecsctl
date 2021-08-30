@@ -1,20 +1,23 @@
 name: 'Amazon ECS Task Definition Jinja2 based renderer'
-description: 'Helm like generation of AWS ECS Task definition'
+description: 'Helm like generation of AWS ECS definitions'
 branding:
   icon: 'package'
   color: 'orange'
 inputs:
-  task-definition:
+  definition:
     description: 'The path to the ECS task definition JSON file'
     required: true
   values:
     description: 'Path to the file or directory holding values interpolating the task definition. Multiple space separated paths are possible.'
     required: true
   image:
-    description: 'The image varible override'
+    description: 'The image variable override'
+  validate:
+    description: 'Choose validation schema, e.g., task-definition, service'
+    default: task-definition
 outputs:
-  task-definition:
-    description: 'The path to the rendered task definition file'
+  definition:
+    description: 'The path to the rendered definition file'
 runs:
   using: 'docker'
   image: 'Dockerfile'

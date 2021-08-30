@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-from ecs_render import render, helper
+from ecs import render, helper
 import json
 import logging
 
@@ -15,6 +15,8 @@ if __name__ == "__main__":
         '--val', nargs="*", help="Path values used for interpolation of task definition (json, yaml, or even a directory)")
     parser.add_argument('--set', nargs="*",
                         help="Values overrides, e.g., name=NAME,value=VALUE")
+    parser.add_argument(
+        '--format', help="Format of generated document, e.g., json or flyway", default="json")
     args = parser.parse_args()
 
     # Load variables from given files
@@ -45,4 +47,7 @@ if __name__ == "__main__":
     mtd = render.merge_dicts(td)
 
     # Generate output json file (ideally in pretty format)
-    print(json.dumps(mtd, indent=4, sort_keys=True))
+    if args.format == "json":
+        print(json.dumps(mtd, indent=4, sort_keys=True))
+    if args.format == "flyway":
+        print(helper.format_flyway(mtd))

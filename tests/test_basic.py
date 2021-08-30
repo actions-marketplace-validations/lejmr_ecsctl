@@ -1,4 +1,4 @@
-import ecs_render
+import ecs
 
 def test_answer():
     assert 5 == 5

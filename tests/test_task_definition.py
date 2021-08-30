@@ -1,4 +1,4 @@
-from ecs_render.render import load_path
+from ecs.render import load_path
 
 
 def test_simple_td():

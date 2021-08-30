@@ -1,4 +1,4 @@
-from ecs_render.render import render
+from ecs.render import render
 
 
 def test_simple_render():

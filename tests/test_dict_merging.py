@@ -1,4 +1,4 @@
-from ecs_render.render import merge_dicts
+from ecs.render import merge_dicts
 import pytest
 
 
@@ -54,6 +54,35 @@ def test_nested1():
             {"name": "test1", "family": "family1"},
             {"name": "test2", "family": "family2"}
         ]
+    }
+
+
+def test_nested2():
+    # Input list of dicts - happy path
+    inp = [
+        {
+            "a": "b",
+            "b": [{"name": "test1", "family": "family1"}],
+            "c": 1,
+            "d": 0.5
+        },
+        {
+            "b": [{"name": "test2", "family": "family2"}],
+            "a": "b",
+            "c": 5
+        }
+    ]
+
+    # just the merge
+    m = merge_dicts(inp)
+    assert m == {
+        "a": "b",
+        "b": [
+            {"name": "test1", "family": "family1"},
+            {"name": "test2", "family": "family2"}
+        ],
+        "c": 5,
+        "d": 0.5
     }
 
 def test_same_values():

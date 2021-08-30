@@ -1,4 +1,4 @@
-from ecs_render.render import interpolate_values
+from ecs.render import interpolate_values
 import pytest
 
 def test_no_interpolation():

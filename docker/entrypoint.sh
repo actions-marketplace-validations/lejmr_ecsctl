@@ -3,9 +3,11 @@
 # Set to fail asap
 set -e 
 
-# Defines output 
-export OUTPUT_TASK_DEFINITION_PATH="task-definition-rendered.json"
-export INPUT_TASK_DEFINITION="$(env | sed -n 's/^INPUT_TASK-DEFINITION=\(.*\)/\1/p')"
+### GitHub actions --  https://docs.github.com/en/actions/reference/environment-variables
+if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
+    # Defines output 
+    export OUTPUT_DEFINITION_PATH=$(mktemp ${INPUT_VALIDATE:-task-definition}.XXXX)".json"
+fi 
 
 if [ -z "$OUTPUT_TASK_DEFINITION_PATH" ] && [ -z "$INPUT_TASK_DEFINITION" ]; then
     # Base command
