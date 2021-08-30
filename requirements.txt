@@ -3,4 +3,4 @@ Jinja2==2.11.3
 python-magic==0.4.18
 python-slugify
 dateparser
-click==8.0.1
+click

@@ -10,7 +10,7 @@ def test_flyway_formater1():
             "b": 2
         }
     }
-    assert format_flyway(a).split('\n') == ["flyway.a = 1", "flyway.b = 2"]
+    assert format_flyway(a).split('\n').sort() == ["flyway.a = 1", "flyway.b = 2"].sort()
 
 
 def test_flyway_formater2():
@@ -23,4 +23,4 @@ def test_flyway_formater2():
             }
         }
     }
-    assert format_flyway(a).split('\n') == ["flyway.a = 1", "flyway.b.c = 5", "flyway.b.d = 56"]
+    assert format_flyway(a).split('\n').sort() == ["flyway.a = 1", "flyway.b.c = 5", "flyway.b.d = 56"].sort()
