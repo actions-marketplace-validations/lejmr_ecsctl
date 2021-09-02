@@ -113,13 +113,13 @@ def _load_and_interpolate_values(values, envs):
         raise Exception('Envs variable must be dict!')
     values = render.merge_dicts([values, envs])
 
+    # Append extra variables
+    values['region'] = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
     # Interpolate variables
     if len(values):
         # Return interpolated values
         return render.interpolate_values(values)
-    
-    # Append extra variables
-    values['region'] = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
     
     # Return values
     return values
