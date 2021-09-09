@@ -124,3 +124,16 @@ def install_service(sd, td_arn):
         return client.update_service(**sd)['service']['serviceArn']
     else: 
         return client.create_service(**sd)['service']['serviceArn']
+
+
+def kill_tasks(cluster, service_arn):
+    """
+    Function for stopping all currently running tasks off given service
+    """
+    # Setup connection to ECS interface
+    client = boto3.client('ecs')
+
+    # List tasks for given service
+    lt = client.list_tasks(cluster=cluster, serviceName=service_arn.split('/')[-1])
+    for task_arn in lt.get('taskArns', []):
+        client.stop_task(cluster=cluster, task=task_arn)

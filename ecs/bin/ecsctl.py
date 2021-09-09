@@ -107,6 +107,7 @@ def generate(**kwargs):
 @group.command()
 @add_options(_shared_options)
 @click.option('--force-task-definition', "force_td", is_flag=True)
+@click.option('--fast-redeploy', "fast_redeploy", is_flag=True)
 @click.option('--wait', "wait_for_service", is_flag=True)
 @click.option('-r', '--region', 'aws_region', show_default=True, default="us-east-1")
 def install(**kwargs):
@@ -124,6 +125,10 @@ def install(**kwargs):
     # Echo ARNS
     click.secho("Task-definition ARN: {}".format(arn_td))
     click.secho("Service ARN: {}".format(arn_s))
+
+    # Kill all currently running tasks
+    if kwargs['fast_redeploy']:
+        ecs.kill_tasks(ts.get('cluster'), arn_s)
 
     # Waiter
     if kwargs['wait_for_service']:

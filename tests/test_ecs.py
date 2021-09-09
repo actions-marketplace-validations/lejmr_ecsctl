@@ -1,5 +1,5 @@
 from moto import mock_ecs
-from ecs.ecs import install_or_update_task_definition, _compare_dicts, install_service
+from ecs.ecs import install_or_update_task_definition, _compare_dicts, install_service, kill_tasks
 import os
 from botocore.exceptions import ParamValidationError, UnsupportedS3AccesspointConfigurationError
 import pytest
@@ -349,3 +349,38 @@ def test_service_update():
     assert arn_s in client.list_services(cluster=clusterName)['serviceArns']
     s = client.describe_services(cluster=clusterName, services=[arn_s])['services'][0]
     assert s['taskDefinition'] == arn_t2
+
+
+
+def test_kill_tasks():
+    mock = mock_ecs()
+    mock.start()
+
+    os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
+    client = boto3.client('ecs')
+    clusterName = "testCluster"
+    client.create_cluster(clusterName=clusterName)
+    # Create a new task definition and service
+    arn_t = install_or_update_task_definition({
+        'family': 'test',
+        'containerDefinitions': [
+            {
+                "name": "main_app"
+            }
+        ]
+        })
+    arn_s = install_service({
+        "serviceName": "testService",
+        "cluster": clusterName,
+        "desiredCount": 1,
+        "taskDefinition": ""
+    }, arn_t)
+
+    # Stop all tasks
+    kill_tasks(clusterName, arn_s)
+
+    # Validate there are no tasks
+    tasks = client.list_tasks(cluster=clusterName, serviceName="testService").get('taskArns', [])
+
+    mock.stop()
+    assert len(tasks) == 0
