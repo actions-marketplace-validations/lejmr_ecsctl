@@ -62,24 +62,24 @@ def test_load_project5():
 # values management
 def test_load_variables_default():
     vals = _load_and_interpolate_values(['tests/projects/proj1/values.yml'], {})
-    assert vals == {'environment': 'dev', 'sn': 'test-service'}
+    assert vals == {'environment': 'dev', 'sn': 'test-service', 'region': 'us-east-1'}
 
 def test_load_variables_default2():
     vals = _load_and_interpolate_values([
         'tests/projects/proj1/values.yml',
         'tests/projects/proj2/values.yaml'], {})
-    assert vals == {'environment': 'dev', 'sn': 'test-service', 'proj2_environment': 'dev'}
+    assert vals == {'environment': 'dev', 'sn': 'test-service', 'proj2_environment': 'dev', 'region': 'us-east-1'}
 
 
 def test_load_variables_override():
     vals = _load_and_interpolate_values(['tests/projects/proj1/values.yml'], {"environment": "test"})
-    assert vals == {'environment': 'test', 'sn': 'test-service'}
+    assert vals == {'environment': 'test', 'sn': 'test-service', 'region': 'us-east-1'}
 
 def test_load_variables_override2():
     vals = _load_and_interpolate_values([
         'tests/projects/proj1/values.yml',
         'tests/projects/proj2/values.yaml'], {"environment": "test"})
-    assert vals == {'environment': 'test', 'sn': 'test-service', 'proj2_environment': 'test'}
+    assert vals == {'environment': 'test', 'sn': 'test-service', 'proj2_environment': 'test', 'region': 'us-east-1'}
 
 # Test outputing mechanism
 def test_output_is_loaded():
