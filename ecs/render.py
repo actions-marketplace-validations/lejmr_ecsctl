@@ -3,7 +3,7 @@ import errno
 import magic
 import yaml
 from jinja2 import Template, Environment, FileSystemLoader
-from .extra_filters import get_jira_id, get_slug, filter_dateparser, filter_format
+from .extra_filters import get_jira_id, get_slug, filter_dateparser, filter_format, decode_aws_secret
 
 
 # support function allowing to read content of a file or directory specified by path variable
@@ -42,6 +42,7 @@ def load_path(path, ivalues=None, raw=False):
                 env.filters['slug'] = get_slug
                 env.filters['dateparser'] = filter_dateparser
                 env.filters['format_timestamp'] = filter_format
+                env.filters['decode_aws_secret'] = decode_aws_secret
                 env.loader = FileSystemLoader(os.path.dirname(path))
                 t = env.from_string(f.read())
                 r = t.render(**ivalues)
