@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ecscontrol',
-    version='1.0.0',
+    version='1.0.1',
     license='MIT',
     description = 'Tool for automation of deployments to AWS ECS',
     author = 'Milos Kozak',
@@ -21,7 +21,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'ecsdeploy = ecs.bin.ecsctl:group',
+            'ecsctl = ecs.bin.ecsctl:group',
         ],
     },
     classifiers=[
