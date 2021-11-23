@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ecscontrol',
-    version='0.1.0',
+    version='1.0.0',
     license='MIT',
     description = 'Tool for automation of deployments to AWS ECS',
     author = 'Milos Kozak',
